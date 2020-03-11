@@ -59,7 +59,7 @@ function plot(data){
             }
         }
 
-        var future = 10;
+        var future = 14;
         var x2 = [];
         for(var i=0;i<x.length+future;i++){
             x2.push(i);
@@ -170,10 +170,12 @@ function plot(data){
         }
 
         var inflectionPointFromToday = x0_opt - x[x.length-1];
+        var date = new Date();
 
         document.getElementById("model2_metric1").innerHTML = Math.round(L_opt) + " cases";
         document.getElementById("model2_metric2").innerHTML = Math.round(100*tau_opt)/100 + " days";
         document.getElementById("model2_metric3").innerHTML = Math.round(100*inflectionPointFromToday)/100 + " days from today";
+        document.getElementById("model2_metric4").innerHTML = date.addDays(inflectionPointFromToday).toDateString();
 
         var yHat = [];
         var x2 = [];
@@ -189,6 +191,12 @@ function plot(data){
             y_error2.push((y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))) * (y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))));
         }
         return [yHat, y_error2];
+    }
+
+    Date.prototype.addDays = function(days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
     }
 
     function calculateError(x, y, lambda, offset){
