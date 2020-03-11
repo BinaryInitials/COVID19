@@ -1,0 +1,99 @@
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.1.1/math.js"></script>
+<link rel="shortcut icon" type="image/x-icon" href="logo.png" />
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="plot.js"></script>
+</head>
+<body>
+
+<br><div class="container-fluid" id="coffee" style="visibility: hidden">
+<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('COFFEE', '#553333', 'E1E81HLXN');kofiwidget2.draw();</script>
+</div>
+<div id="graph"></div>
+<div id="error"></div>
+<div class="container-fluid" id="predictions" style="visibility: hidden;">
+	9-day Predictions:
+<table class="table table-striped table-bordered table-hover table-sm">
+	<thead>
+		<tr>
+			<th scope="col">#</th>
+			<th scope="col">Exponential</th>
+			<th scope="col">Sigmoid</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th score="row">0 (today)</th>
+			<td id="row1_col2"></td>
+			<td id="row1_col3"></td>
+		</tr>
+		<tr>
+			<th score="row">1 (tomorrow)</th>
+			<td id="row2_col2"></td>
+			<td id="row2_col3"></td>
+		</tr>
+		<tr>
+		<th score="row">2</th>
+			<td id="row3_col2"></td>
+			<td id="row3_col3"></td>
+		</tr>
+		<th score="row">3</th>
+			<td id="row4_col2"></td>
+			<td id="row4_col3"></td>
+		</tr>
+		<th score="row">4</th>
+			<td id="row5_col2"></td>
+			<td id="row5_col3"></td>
+		</tr>
+		<th score="row">5</th>
+			<td id="row6_col2"></td>
+			<td id="row6_col3"></td>
+		</tr>
+		<th score="row">6</th>
+			<td id="row7_col2"></td>
+			<td id="row7_col3"></td>
+		</tr>
+		<th score="row">7</th>
+			<td id="row8_col2"></td>
+			<td id="row8_col3"></td>
+		</tr>
+		<th score="row">8</th>
+			<td id="row9_col2"></td>
+			<td id="row9_col3"></td>
+		</tr>
+		<th score="row">9</th>
+			<td id="row10_col2"></td>
+			<td id="row10_col3"></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+
+<div class="d-flex justify-content-center" id="loader">
+	<div class="spinner-grow" role="status">
+	  <span class="sr-only">Loading...</span>
+	</div>
+	Loading...
+</div>
+
+<div class="container" id="metrics" style="visibility: hidden;">
+	Exponential Model:
+	<pre>Predicted Time Constant, tau: <label id="model1_metric1"></label></pre>
+
+	Sigmoid Model:
+	<pre>Predicted Assymptotic Affected: <label id="model2_metric1"></label></pre>
+	<pre>Predicted Time Constant, tau: <label id="model2_metric2"></label></pre>
+	<pre>Predicted Inflection Point: <label id="model2_metric3"></label></pre>
+</div>
+
+<script>
+plot('data.json');
+</script>
+</body>
