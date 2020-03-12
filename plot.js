@@ -14,7 +14,6 @@ function plot(data, country){
         document.getElementById("loader").style.visibility = "hidden";
         document.getElementById("predictions").style.visibility = "visible";
         document.getElementById("metrics").style.visibility = "visible";
-        document.getElementById("coffee").style.visibility = "visible";
         Plotly.newPlot('graph', graph_data[0], {title: 'COVID-19 Cases in ' + country, showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
         Plotly.newPlot('error', graph_data[1], {title: 'Error^2', showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
     });
