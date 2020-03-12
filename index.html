@@ -1,4 +1,5 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,22 +11,44 @@
 <link rel="shortcut icon" type="image/x-icon" href="logo.png" />
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="plot.js"></script>
+
+
+<style>
+	body {
+  		background: linear-gradient(180deg, #FFF, #777);
+	}
+</style>
+
 </head>
+
 <body>
 
 <br><div class="container-fluid" id="coffee" style="visibility: hidden">
 <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('COFFEE', '#553333', 'E1E81HLXN');kofiwidget2.draw();</script>
 </div>
 
-<div class="d-flex justify-content-center" id="loader">
+
+<div class="container float-left">
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_ge.json', 'Germany')"><img src="fb_germany.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_it.json', 'Italy')"><img src="fb_italy.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_fr.json', 'France')"><img src="fb_france.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_sp.json', 'Spain')"><img src="fb_spain.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_us.json', 'the US')"><img src="fb_us.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_jp.json', 'Japan')"><img src="fb_japan.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_sk.json', 'South Korea')"><img src="fb_south_korea.png" width=50px height=40px></button><br>
+	<button type="button" class="btn btn-light" style="width:150px; margin-bottom: 5px" onclick="plot('data_ir.json', 'Iran')"><img src="fb_iran.png" width=50px height=40px></button><br>
+</div>
+
+
+<div class="d-flex justify-content-center" id="loader" style="visibility: hidden;">
 	<div class="spinner-grow" role="status" id="loader">
 	  <span class="sr-only">Loading...</span>
 	</div>
 	Loading...
 </div>
 
-<div id="graph"></div>
-<div id="error"></div>
+<div id="graph" style="margin-left: 200px"></div>
+<div id="error" style="margin-left: 200px"></div>
 <div class="container-fluid" id="predictions" style="visibility: hidden;">
 	9-day Predictions:
 <table class="table table-striped table-bordered table-hover table-sm">
@@ -86,16 +109,13 @@
 
 <div class="container" id="metrics" style="visibility: hidden;">
 	Exponential Model:
-	<pre>Predicted Time Constant, tau: <label id="model1_metric1"></label></pre>
+	<pre>Time Constant, tau: <label id="model1_metric1"></label></pre>
 
 	Sigmoid Model:
-	<pre>Predicted Assymptotic Affected: <label id="model2_metric1"></label></pre>
-	<pre>Predicted Time Constant, tau: <label id="model2_metric2"></label></pre>
-	<pre>Predicted Inflection Point: <label id="model2_metric3"></label></pre>
+	<pre>Assymptotic Cases: <label id="model2_metric1"></label></pre>
+	<pre>Time Constant, tau: <label id="model2_metric2"></label></pre>
+	<pre>Inflection Point: <label id="model2_metric3"></label></pre>
 	<pre>This will happen on this date: <label id="model2_metric4"></label></pre>
 </div>
-
-<script>
-plot('data.json');
-</script>
 </body>
+</html>

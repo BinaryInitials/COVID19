@@ -1,4 +1,7 @@
-function plot(data){
+function plot(data, country){
+
+
+    document.getElementById("loader").style.visibility = "visible";
 
     var xField = 'x';
     var yField = 'y';
@@ -12,8 +15,8 @@ function plot(data){
         document.getElementById("predictions").style.visibility = "visible";
         document.getElementById("metrics").style.visibility = "visible";
         document.getElementById("coffee").style.visibility = "visible";
-        Plotly.plot('graph', graph_data[0], {title: 'COVID-19 Outbreak, US',showlegend: true});
-        Plotly.plot('error', graph_data[1], {title: 'Error^2, US',showlegend: true});
+        Plotly.newPlot('graph', graph_data[0], {title: 'COVID-19 Cases in ' + country, showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
+        Plotly.newPlot('error', graph_data[1], {title: 'Error^2', showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
     });
 
     function prepData(data) {
@@ -21,15 +24,21 @@ function plot(data){
         var y = [];
         var X = [];
         var logy = [];
+        var counter=0;
+        var dates = [];
+        var dates2 = [];
         data.forEach(function(d, i) {
-            var xtemp=d[xField];
-            var ytemp=d[yField];
 
-            x.push(xtemp);
-            X.push([xtemp, 1]);
-            y.push(ytemp);
 
+            x.push(counter);
+            X.push([counter, 1]);
+            counter+=1;
+            dates.push(new Date(d[xField]));
+            dates2.push(new Date(d[xField]));
+            y.push(d[yField]);
             logy.push(Math.log(d[yField]));
+
+            console.log(dates[counter-1] + "\t" + d[yField])
         });
 
         const matrixX = math.matrix(X);
@@ -60,9 +69,15 @@ function plot(data){
         }
 
         var future = 14;
+
         var x2 = [];
         for(var i=0;i<x.length+future;i++){
             x2.push(i);
+        }
+
+
+        for(var i=1;i<=future;i++){
+            dates2.push(dates[dates.length-1].addDays(i));
         }
 
         var yHat = [];
@@ -86,15 +101,24 @@ function plot(data){
             document.getElementById("row" + (i-x.length+1) + "_col3").innerHTML = Math.round(yHat2[i]);
         }
 
+        var x_inflection = [];
+        var y_inflection = [];
+
+        var metrics = bundle[2];
+
+        x_inflection.push(dates[dates.length-1].addDays(metrics[1]-dates.length+1));
+        y_inflection.push(metrics[0]/2.0);
+
         return [
             [
-                {name: 'data', hoverinfo: 'y', mode: 'markers', x: x, y: y, marker: {color: 'rgba(0,0,0,0.3)', size: 15}},
-                {name: 'exp model', hoverinfo: 'y', mode: 'lines', x: x2, y: yHat, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
-                {name: 'sigmoid model', hoverinfo: 'y', mode: 'lines', x: x2, y: yHat2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
+                {name: 'data', hoverinfo: 'y', mode: 'markers', x: dates, y: y, marker: {color: 'rgba(0,0,0,0.7)', size: 13}},
+                {name: 'exp model', hoverinfo: 'y', mode: 'lines', x: dates2, y: yHat, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
+                {name: 'sigmoid model', hoverinfo: 'y', mode: 'lines', x: dates2, y: yHat2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
+                {name: 'inflection point', hoverinfo: 'y', mode: 'markers', x: x_inflection, y: y_inflection, marker: {color: 'rgba(0,200,100,0.7)', size: 15}},
             ],
             [
-                {name: 'exp error', hoverinfo: 'y', mode: 'lines', x: x, y: y_error1, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
-                {name: 'sigmoid error', hoverinfo: 'y', mode: 'lines', x: x, y: y_error2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
+                {name: 'exp error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error1, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
+                {name: 'sigmoid error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
             ]
             ];
     }
@@ -190,7 +214,14 @@ function plot(data){
         for(var i=0;i<x.length;i++){
             y_error2.push((y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))) * (y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))));
         }
-        return [yHat, y_error2];
+
+        var metrics = [];
+        metrics.push(L_opt);
+        metrics.push(x0_opt);
+        metrics.push(tau_opt);
+
+
+        return [yHat, y_error2, metrics];
     }
 
     Date.prototype.addDays = function(days) {
