@@ -11,11 +11,12 @@ function plot(data, country){
 
         var graph_data = prepData(data);
 
-        document.getElementById("loader").style.visibility = "hidden";
+        
         document.getElementById("predictions").style.visibility = "visible";
         document.getElementById("metrics").style.visibility = "visible";
-        Plotly.newPlot('graph', graph_data[0], {title: 'COVID-19 Cases in ' + country, showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
-        Plotly.newPlot('error', graph_data[1], {title: 'Error^2', showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
+        Plotly.newPlot('graph', graph_data[1], {title: 'COVID-19 Cases in ' + country, showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)', yaxis: {range: [0, graph_data[0][0]]}});
+        Plotly.newPlot('error', graph_data[2], {title: 'Error^2', showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
+        document.getElementById("loader").style.visibility = "hidden";
     });
 
     function prepData(data) {
@@ -27,8 +28,6 @@ function plot(data, country){
         var dates = [];
         var dates2 = [];
         data.forEach(function(d, i) {
-
-
             x.push(counter);
             X.push([counter, 1]);
             counter+=1;
@@ -36,8 +35,6 @@ function plot(data, country){
             dates2.push(new Date(d[xField]));
             y.push(d[yField]);
             logy.push(Math.log(d[yField]));
-
-            console.log(dates[counter-1] + "\t" + d[yField])
         });
 
         const matrixX = math.matrix(X);
@@ -96,6 +93,7 @@ function plot(data, country){
         document.getElementById("model1_metric1").innerHTML = Math.round(10/lambdaOpt)/10 + " days";
 
         for(var i=x.length;i<x.length+10;i++){
+            document.getElementById("row" + (i-x.length+1) + "_col1").innerHTML = dates[dates.length-1].addDays(i-x.length).toDateString();
             document.getElementById("row" + (i-x.length+1) + "_col2").innerHTML = Math.round(yHat[i]);
             document.getElementById("row" + (i-x.length+1) + "_col3").innerHTML = Math.round(yHat2[i]);
         }
@@ -109,6 +107,7 @@ function plot(data, country){
         y_inflection.push(metrics[0]/2.0);
 
         return [
+            [Math.max(y_inflection[0], y[y.length-1])*1.66],
             [
                 {name: 'data', hoverinfo: 'y', mode: 'markers', x: dates, y: y, marker: {color: 'rgba(0,0,0,0.7)', size: 13}},
                 {name: 'exp model', hoverinfo: 'y', mode: 'lines', x: dates2, y: yHat, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
