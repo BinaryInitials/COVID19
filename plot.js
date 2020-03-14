@@ -1,12 +1,12 @@
 function plot(data, country){
 
-
-    document.getElementById("loader").style.visibility = "visible";
+    
 
     var xField = 'x';
     var yField = 'y';
 
     Plotly.d3.csv(data, function(err, data) {
+
         if(err) throw err;
 
         var graph_data = prepData(data);
@@ -14,28 +14,114 @@ function plot(data, country){
         
         document.getElementById("predictions").style.visibility = "visible";
         document.getElementById("metrics").style.visibility = "visible";
+        document.getElementById("graph").style.visiblity= "visible";
+        document.getElementById("error").style.visiblity= "visible";
         Plotly.newPlot('graph', graph_data[1], {title: 'COVID-19 Cases in ' + country, showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)', yaxis: {range: [0, graph_data[0][0]]}});
-        Plotly.newPlot('error', graph_data[2], {title: 'Error^2', showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
+        Plotly.newPlot('error', graph_data[2], {title: 'log(Error)', showlegend: true, plot_bgcolor: 'rgba(0, 0, 0, 0)', paper_bgcolor: 'rgba(0, 0, 0, 0)'});
         document.getElementById("loader").style.visibility = "hidden";
     });
 
     function prepData(data) {
+
         var x = [];
         var y = [];
-        var X = [];
-        var logy = [];
-        var counter=0;
         var dates = [];
         var dates2 = [];
+        var counter = 0;
+
+
         data.forEach(function(d, i) {
             x.push(counter);
-            X.push([counter, 1]);
-            counter+=1;
+            y.push(d[yField]);
+            
             dates.push(new Date(d[xField]));
             dates2.push(new Date(d[xField]));
-            y.push(d[yField]);
-            logy.push(Math.log(d[yField]));
+            
+            counter+=1;
         });
+
+
+        var future = 14;
+
+        var bundleExponentialminus0 = calculateExponential(x,y,future);
+        var bundleExponentialminus1 = calculateExponential(x.slice(0,y.length-1),y.slice(0,y.length-1),future);
+        var bundleExponentialminus2 = calculateExponential(x.slice(0,y.length-2),y.slice(0,y.length-2),future);
+        // var bundleExponentialminus3 = calculateExponential(x.slice(0,y.length-3),y.slice(0,y.length-3),future);
+        // var bundleExponentialminus4 = calculateExponential(x.slice(0,y.length-4),y.slice(0,y.length-4),future);
+        // var bundleExponentialminus5 = calculateExponential(x.slice(0,y.length-5),y.slice(0,y.length-5),future);
+        
+        var bundleLogisticminus0 = calculateLogistic(x,y,future);
+        var bundleLogisticminus1 = calculateLogistic(x.slice(0,y.length-1),y.slice(0,y.length-1),future);
+        var bundleLogisticminus2 = calculateLogistic(x.slice(0,y.length-2),y.slice(0,y.length-2),future);
+        // var bundleLogisticminus3 = calculateLogistic(x.slice(0,y.length-3),y.slice(0,y.length-3),future);
+        // var bundleLogisticminus4 = calculateLogistic(x.slice(0,y.length-4),y.slice(0,y.length-4),future);
+        // var bundleLogisticminus5 = calculateLogistic(x.slice(0,y.length-5),y.slice(0,y.length-5),future);
+
+        var y_error1 = bundleExponentialminus0[1];
+        var y_error2 = bundleLogisticminus0[1];
+
+        for(var i=1;i<=future;i++){
+            dates2.push(dates[dates.length-1].addDays(i));
+        }
+
+        document.getElementById("model1_metric1").innerHTML = Math.round(10/bundleExponentialminus0[2][0])/10 + " days";
+
+        for(var i=x.length;i<x.length+10;i++){
+            document.getElementById("row" + (i-x.length+1) + "_col1").innerHTML = dates[dates.length-1].addDays(i-x.length+2).toDateString();
+            document.getElementById("row" + (i-x.length+1) + "_col2").innerHTML = Math.round(bundleExponentialminus0[0][i]);
+            document.getElementById("row" + (i-x.length+1) + "_col3").innerHTML = Math.round(bundleLogisticminus0[0][i]);
+        }
+
+        var x_inflection = [];
+        var y_inflection = [];
+        
+        x_inflection.push(dates[dates.length-1].addDays(bundleLogisticminus2[2][1]-dates.length+1));
+        x_inflection.push(dates[dates.length-1].addDays(bundleLogisticminus1[2][1]-dates.length+1));
+        x_inflection.push(dates[dates.length-1].addDays(bundleLogisticminus0[2][1]-dates.length+1));
+        
+
+        y_inflection.push(bundleLogisticminus2[2][0]/2.0);
+        y_inflection.push(bundleLogisticminus1[2][0]/2.0);
+        y_inflection.push(bundleLogisticminus0[2][0]/2.0);
+
+        return [
+            [Math.max(y_inflection[0], y[y.length-1])*1.66],
+            [
+                {name: 'data', hoverinfo: 'y', mode: 'markers', x: dates, y: y, marker: {color: 'rgba(0,0,0,0.7)', size: 13}},
+                {name: 'exp '+dates[dates.length-1].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2, y: bundleExponentialminus0[0], line: {dash: 'solid', color: 'rgb(255,0,0)', size: 1}},
+                {name: 'exp '+dates[dates.length-2].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-1), y: bundleExponentialminus1[0], line: {dash: 'dashdot', color: 'rgb(200,0,50)', size: 1}},
+                {name: 'exp '+dates[dates.length-3].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-2), y: bundleExponentialminus2[0], line: {dash: 'dash', color: 'rgb(150,0,100)', size: 1}},
+                // {name: 'exp n-3', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-3), y: bundleExponentialminus3[0], line: {dash: 'dashdot', color: 'rgb(200,50,0)', size: 1}},
+                // {name: 'exp n-4', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-4), y: bundleExponentialminus4[0], line: {dash: 'dashdot', color: 'rgb(175,75,0)', size: 1}},
+                // {name: 'exp n-5', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-5), y: bundleExponentialminus5[0], line: {dash: 'dashdot', color: 'rgb(150,100,0)', size: 1}},
+
+                {name: 'sigmoid '+dates[dates.length-1].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2, y: bundleLogisticminus0[0], line: {dash: 'solid', color: 'rgb(0,0,255)', size: 1}},
+                {name: 'sigmoid '+dates[dates.length-2].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-1), y: bundleLogisticminus1[0], line: {dash: 'dashdot', color: 'rgb(50,0,200)', size: 1}},
+                {name: 'sigmoid '+dates[dates.length-3].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-2), y: bundleLogisticminus2[0], line: {dash: 'dash', color: 'rgb(10,0,150)', size: 1}},
+                // {name: 'sigmoid n-3', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-3), y: bundleLogisticminus3[0], line: {dash: 'dashdot', color: 'rgb(50,0,200)', size: 1}},
+                // {name: 'sigmoid n-4', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-4), y: bundleLogisticminus4[0], line: {dash: 'dashdot', color: 'rgb(75,0,175)', size: 1}},
+                // {name: 'sigmoid n-5', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-5), y: bundleLogisticminus5[0], line: {dash: 'dashdot', color: 'rgb(100,0,150)', size: 1}},
+
+
+
+                {name: 'inflection points', hoverinfo: 'y', mode: 'markers', x: x_inflection, y: y_inflection, marker: {color: 'rgba(0,200,100,0.7)', size: 15}},
+            ],
+            [
+                {name: 'exp error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error1, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
+                {name: 'sigmoid error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
+            ]
+            ];
+    }
+
+    function calculateExponential(x,y,future){
+        
+        var X = [];
+        var logy = [];
+
+        for(var i=0;i<x.length;i++){
+            X.push([i, 1]);
+            logy.push(Math.log(y[i]));
+        }
 
         const matrixX = math.matrix(X);
         const matrixY = math.matrix(logy);
@@ -64,61 +150,30 @@ function plot(data, country){
             }
         }
 
-        var future = 14;
-
         var x2 = [];
         for(var i=0;i<x.length+future;i++){
             x2.push(i);
         }
 
 
-        for(var i=1;i<=future;i++){
-            dates2.push(dates[dates.length-1].addDays(i));
-        }
+        
 
         var yHat = [];
         for(var i=0;i<x2.length;i++){
             yHat.push(Math.exp(offsetOpt + lambdaOpt*x2[i]));
         }
 
-        var bundle = calculateLogistic(x,y,future);
-        var yHat2 = bundle[0];
-        var y_error2 = bundle[1];
+        var metrics = [];
+        metrics.push(lambdaOpt);
+        metrics.push(offsetOpt);
 
-        var y_error1 = [];
+
+        var y_error = [];
         for(var i=0;i<x.length;i++){
-            y_error1.push((y[i] - Math.exp(offsetOpt + lambdaOpt*x[i]))*(y[i] - Math.exp(offsetOpt + lambdaOpt*x[i])));
+            y_error.push(Math.log((y[i] - Math.exp(offsetOpt + lambdaOpt*x[i]))*(y[i] - Math.exp(offsetOpt + lambdaOpt*x[i]))));
         }
 
-        document.getElementById("model1_metric1").innerHTML = Math.round(10/lambdaOpt)/10 + " days";
-
-        for(var i=x.length;i<x.length+10;i++){
-            document.getElementById("row" + (i-x.length+1) + "_col1").innerHTML = dates[dates.length-1].addDays(i-x.length).toDateString();
-            document.getElementById("row" + (i-x.length+1) + "_col2").innerHTML = Math.round(yHat[i]);
-            document.getElementById("row" + (i-x.length+1) + "_col3").innerHTML = Math.round(yHat2[i]);
-        }
-
-        var x_inflection = [];
-        var y_inflection = [];
-
-        var metrics = bundle[2];
-
-        x_inflection.push(dates[dates.length-1].addDays(metrics[1]-dates.length+1));
-        y_inflection.push(metrics[0]/2.0);
-
-        return [
-            [Math.max(y_inflection[0], y[y.length-1])*1.66],
-            [
-                {name: 'data', hoverinfo: 'y', mode: 'markers', x: dates, y: y, marker: {color: 'rgba(0,0,0,0.7)', size: 13}},
-                {name: 'exp model', hoverinfo: 'y', mode: 'lines', x: dates2, y: yHat, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
-                {name: 'sigmoid model', hoverinfo: 'y', mode: 'lines', x: dates2, y: yHat2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
-                {name: 'inflection point', hoverinfo: 'y', mode: 'markers', x: x_inflection, y: y_inflection, marker: {color: 'rgba(0,200,100,0.7)', size: 15}},
-            ],
-            [
-                {name: 'exp error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error1, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
-                {name: 'sigmoid error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
-            ]
-            ];
+        return [yHat, y_error, metrics];
     }
 
     function calculateLogistic(x,y,future){
@@ -210,7 +265,7 @@ function plot(data, country){
 
         var y_error2 = [];
         for(var i=0;i<x.length;i++){
-            y_error2.push((y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))) * (y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))));
+            y_error2.push(Math.log((y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt))) * (y[i] - L_opt/(1 + Math.exp(-(x[i]-x0_opt)/tau_opt)))));
         }
 
         var metrics = [];
