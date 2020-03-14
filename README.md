@@ -1,6 +1,6 @@
 # COVID19
 
-COVID19 is a web application that dynamically generates population models for the COVID-19 virus.
+COVID19 is a web application that dynamically generates population models prediciting individuals affected by COVID-19.
 
 ## Installation
 
