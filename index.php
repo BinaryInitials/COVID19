@@ -16,7 +16,7 @@
 <style>
 	body {
 		padding-top: 50px;
-  		background: linear-gradient(180deg, #FFF, #CCC);
+  		background: linear-gradient(180deg, #FFF,#EEE, #AAA,#EEE, #FFF);
   		background-attachment: fixed;
   		height: 125%;
 	}
