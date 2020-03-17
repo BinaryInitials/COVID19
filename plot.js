@@ -29,18 +29,9 @@ function plot(data, country){
         var dates2 = [];
         var counter = 0;
 
-
-        console.log("Size of data:")
-        console.log(data.length)
-
-
         data.forEach(function(d, i) {
             x.push(counter);
-            y.push(d[yField]);
-
-
-            console.log(new Date(d[xField]));
-            
+            y.push(d[yField]); 
             dates.push(new Date(d[xField]));
             dates2.push(new Date(d[xField]));
             
