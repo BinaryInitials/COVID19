@@ -102,20 +102,21 @@ function plot(data, country){
                 // {name: 'exp n-4', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-4), y: bundleExponentialminus4[0], line: {dash: 'dashdot', color: 'rgb(175,75,0)', size: 1}},
                 // {name: 'exp n-5', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-5), y: bundleExponentialminus5[0], line: {dash: 'dashdot', color: 'rgb(150,100,0)', size: 1}},
 
-                {name: 'sigmoid '+dates[dates.length-1].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2, y: bundleLogisticminus0[0], line: {dash: 'solid', color: 'rgb(0,0,255)', size: 1}},
-                {name: 'sigmoid '+dates[dates.length-2].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-1), y: bundleLogisticminus1[0], line: {dash: 'dashdot', color: 'rgb(50,0,200)', size: 1}},
-                {name: 'sigmoid '+dates[dates.length-3].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-2), y: bundleLogisticminus2[0], line: {dash: 'dash', color: 'rgb(10,0,150)', size: 1}},
-                // {name: 'sigmoid n-3', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-3), y: bundleLogisticminus3[0], line: {dash: 'dashdot', color: 'rgb(50,0,200)', size: 1}},
-                // {name: 'sigmoid n-4', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-4), y: bundleLogisticminus4[0], line: {dash: 'dashdot', color: 'rgb(75,0,175)', size: 1}},
-                // {name: 'sigmoid n-5', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-5), y: bundleLogisticminus5[0], line: {dash: 'dashdot', color: 'rgb(100,0,150)', size: 1}},
+                {name: 'sig '+dates[dates.length-1].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2, y: bundleLogisticminus0[0], line: {dash: 'solid', color: 'rgb(0,0,255)', size: 1}},
+                {name: 'sig '+dates[dates.length-2].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-1), y: bundleLogisticminus1[0], line: {dash: 'dashdot', color: 'rgb(50,0,200)', size: 1}},
+                {name: 'sig '+dates[dates.length-3].toISOString().split('T')[0], hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-2), y: bundleLogisticminus2[0], line: {dash: 'dash', color: 'rgb(10,0,150)', size: 1}},
+                // {name: 'sig n-3', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-3), y: bundleLogisticminus3[0], line: {dash: 'dashdot', color: 'rgb(50,0,200)', size: 1}},
+                // {name: 'sig n-4', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-4), y: bundleLogisticminus4[0], line: {dash: 'dashdot', color: 'rgb(75,0,175)', size: 1}},
+                // {name: 'sig n-5', hoverinfo: 'y', mode: 'lines', x: dates2.slice(0,dates2.length-5), y: bundleLogisticminus5[0], line: {dash: 'dashdot', color: 'rgb(100,0,150)', size: 1}},
 
 
 
-                {name: 'inflection points', hoverinfo: 'y', mode: 'markers', x: x_inflection, y: y_inflection, marker: {color: 'rgba(0,200,100,0.7)', size: 15}},
+                {name: 'inflection', hoverinfo: 'y', mode: 'markers', x: x_inflection, y: y_inflection, marker: {color: 'rgba(0,200,100,0.7)', size: 15}},
             ],
             [
-                {name: 'exp error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error1, line: {dash: 'dashdot', color: 'rgb(255,0,0)', size: 1}},
-                {name: 'sigmoid error', hoverinfo: 'y', mode: 'lines', x: dates, y: y_error2, line: {dash: 'dashdot', color: 'rgb(255,128,0)', size: 1}},
+                {name: 'exp '+dates[dates.length-1].toISOString().split('T')[0].replace(/^[0-9]{4}./g, ""), hoverinfo: 'y', mode: 'lines', x: dates, y: y_error1, line: {dash: 'solid', color: 'rgb(255,0,0)', size: 1}},
+                {name: 'sig '+dates[dates.length-1].toISOString().split('T')[0].replace(/^[0-9]{4}./g, ""), hoverinfo: 'y', mode: 'lines', x: dates, y: y_error2, line: {dash: 'solid', color: 'rgb(0,0,255)', size: 1}},
+
             ]
             ];
     }
