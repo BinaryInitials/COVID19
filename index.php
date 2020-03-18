@@ -60,7 +60,7 @@
       </li>
   </ul>
   	<div class="nav-item">
-     	 <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('un café SVP', '#AA5533', 'E1E81HLXN');kofiwidget2.draw();</script>
+     	 <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Coffee', '#AA5533', 'E1E81HLXN');kofiwidget2.draw();</script>
   	</div>
   </div>
 </nav>
@@ -97,7 +97,8 @@
 
 
 
-<div class="container" id="loader" style="visibility: visible; margin-left: 40%">
+<div class="container" id="loader" style="visibility: visible; margin-left: 40%; margin-top: 10px">
+	Calculating...
 	<div class="spinner-grow" role="status" id="loader">
 	  <span class="sr-only">Loading...</span>
 	</div>
@@ -113,12 +114,14 @@
     	
     	document.getElementById("graph").style.visiblity= "hidden";
     	document.getElementById("error").style.visiblity= "hidden";
+    	document.getElementById("inflection").style.visiblity= "hidden";
 
 		plot(filename, country);
 	}
 </script>
 <div class="float" id="graph"></div>
 <div class="float" id="error"></div>
+<div class="float" id="inflection"></div>
 
 
 
@@ -189,7 +192,6 @@
 	<pre>Assymptotic Cases: <label id="model2_metric1"></label></pre>
 	<pre>Time Constant, tau: <label id="model2_metric2"></label></pre>
 	<pre>Inflection Point: <label id="model2_metric3"></label></pre>
-	<pre>This will happen on this date: <label id="model2_metric4"></label></pre>
 </div>
 
 <br>
