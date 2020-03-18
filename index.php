@@ -232,9 +232,9 @@ $(function () {
 
 <script>plot('data_us.json', 'the US');</script>
 
-<!-- <script>
+<script>
 	setInterval(function(){$("#content").load("load.php");}, 2000);
 </script>
- -->
+
 </body>
 </html>
